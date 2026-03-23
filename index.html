@@ -5533,34 +5533,103 @@
 
   </div><!-- /pdoc -->
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
   <script>
     (function () {
+      // Helper: get field value by id
       function v(id) { var e = document.getElementById(id); return e ? (e.value || '') : ''; }
-      function r(n) { var q = document.querySelectorAll('input[name="' + n + '"]'); for (var i = 0; i < q.length; i++)if (q[i].checked) return q[i].value; return ''; }
+      // Helper: get checked radio value by name
+      function r(n) { var q = document.querySelectorAll('input[name="' + n + '"]'); for (var i = 0; i < q.length; i++) if (q[i].checked) return q[i].value; return ''; }
+      // Helper: set textContent of print element
       function t(id, val) { var e = document.getElementById(id); if (e) e.textContent = val; }
-      function ck(id, on) { var e = document.getElementById(id); if (!e) return; if (on) { e.style.background = '#1B4332'; e.style.webkitPrintColorAdjust = 'exact'; e.style.printColorAdjust = 'exact'; } else e.style.background = ''; }
+      // Helper: fill/unfill a checkbox span
+      function ck(id, on) { var e = document.getElementById(id); if (!e) return; if (on) { e.style.background = '#1B4332'; e.style.webkitPrintColorAdjust = 'exact'; e.style.printColorAdjust = 'exact'; } else { e.style.background = ''; } }
+
       function sync() {
-        var d = document.getElementById('pdoc'); if (d) d.style.display = 'block';
-        t('pv_fn', v('fieldFirstName')); t('pv_mn', v('fieldMiddleName'));
-        t('pv_ln', v('fieldLastName')); t('pv_sx', v('fieldSuffix'));
-        var dob = [v('dobMM'), v('dobDD'), v('dobYY')].filter(Boolean).join('/'); t('pv_dob', dob);
-        t('pv_mo', v('fieldMobile')); t('pv_em', v('fieldEmail'));
-        t('pv_tin', v('fieldTIN')); t('pv_ha', v('fieldAddress'));
-        t('pv_los', v('fieldYearsAddr')); t('pv_sf', v('fieldSpouse'));
-        t('pv_la', v('fieldLoanAmount')); t('pv_lt', v('fieldLoanTerm'));
+        // Show the print document
+        var d = document.getElementById('pdoc');
+        if (d) d.style.display = 'block';
+
+        // ── PAGE 1: Section A fields ──
+        t('pv_fn', v('fieldFirstName'));
+        t('pv_mn', v('fieldMiddleName'));
+        t('pv_ln', v('fieldLastName'));
+        t('pv_sx', v('fieldSuffix'));
+
+        // Date of birth
+        var dob = [v('dobMM'), v('dobDD'), v('dobYY')].filter(Boolean).join('/');
+        t('pv_dob', dob);
+
+        // Contact & personal
+        t('pv_mo', v('fieldMobile'));
+        t('pv_em', v('fieldEmail'));
+        t('pv_tin', v('fieldTIN'));
+        t('pv_ha', v('fieldAddress'));
+        t('pv_los', v('fieldYearsAddr'));
+        t('pv_sf', v('fieldSpouse'));
+
+        // Civil status checkboxes
+        var civil = r('civil');
+        ck('pc_si', civil === 'Single');
+        ck('pc_ma', civil === 'Married');
+        ck('pc_wd', civil === 'Widowed');
+        ck('pc_se', civil === 'Separated');
+
+        // Borrower type checkboxes
+        var bt = r('btype');
+        ck('pc_in', bt === 'Individual');
+        ck('pc_sp', bt === 'Sole Proprietor');
+
+        // Loan type (new/additional/reloan/renewal/restructuring)
+        // These come from the screen form's loan-type-bar radio buttons
+        var lt = r('loanType');
+        ck('pc_nl', lt === 'New Loan' || lt === 'New');
+        ck('pc_al', lt === 'Additional' || lt === 'Additional Loan');
+        ck('pc_rl', lt === 'Re-Loan' || lt === 'Reloan');
+        ck('pc_rn', lt === 'Renewal');
+        ck('pc_rs', lt === 'Restructuring' || lt === 'Restructure');
+
+        // ── PAGE 2: Loan application fields ──
+        t('pv_la', v('fieldLoanAmount'));
+        t('pv_lt', v('fieldLoanTerm'));
+
+        // Existing loans
         t('pv_l1n', v('loan1Lender')); t('pv_l1a', v('loan1Balance')); t('pv_l1b', v('loan1Pay'));
         t('pv_l2n', v('loan2Lender')); t('pv_l2a', v('loan2Balance')); t('pv_l2b', v('loan2Pay'));
         t('pv_l3n', v('loan3Lender')); t('pv_l3a', v('loan3Balance')); t('pv_l3b', v('loan3Pay'));
-        var civil = r('civil');
-        ck('pc_si', civil === 'Single'); ck('pc_ma', civil === 'Married');
-        ck('pc_wd', civil === 'Widowed'); ck('pc_se', civil === 'Separated');
-        var bt = r('btype');
-        ck('pc_in', bt === 'Individual'); ck('pc_sp', bt === 'Sole Proprietor');
-        t('pv_sln', v('fieldLastName')); t('pv_sfn', v('fieldFirstName'));
-        t('pv_smn', v('fieldMiddleName')); t('pv_scs', civil);
+
+        // ── PAGE 3: Summary fields ──
+        t('pv_sln', v('fieldLastName'));
+        t('pv_sfn', v('fieldFirstName'));
+        t('pv_smn', v('fieldMiddleName'));
+        t('pv_scs', civil);
         t('pv_sla', v('fieldLoanAmount'));
-        var mo = parseFloat(v('fieldLoanTerm')); t('pv_str', mo ? (mo / 12).toFixed(1) + ' yr(s)' : '');
+
+        var mo = parseFloat(v('fieldLoanTerm'));
+        t('pv_str', mo ? (mo / 12).toFixed(1) + ' yr(s)' : '');
+
+        // Loan purpose (collect all checked purpose checkboxes)
         var pp = [];
-        ['purpBusiness', 'purpPersonal', 'purpEducation', 'purpMedical', 'purpHouse', 'purpTax', 'purpPayoff'].forEach(function (id) {
-          var e = document.getElementById(id);
+        ['purpBusiness', 'purpPersonal', 'purpEducation', 'purpMedical',
+          'purpHouse', 'purpTax', 'purpPayoff', 'purpOther'].forEach(function (pid) {
+            var e = document.getElementById(pid);
+            if (e && e.checked) {
+              var label = e.parentElement.textContent.trim().split('/')[0].trim();
+              pp.push(label);
+            }
+          });
+        // Also capture free-text other purpose
+        var otherText = v('purpOtherText');
+        if (otherText) pp.push(otherText);
+        t('pv_spu', pp.join(', '));
+      }
+
+      // Trigger sync when print dialog opens
+      window.addEventListener('beforeprint', sync);
+      // Also expose globally so a "Print" button can call it
+      window.syncPrint = sync;
+    })();
+  </script>
+</body>
+
+</html>
