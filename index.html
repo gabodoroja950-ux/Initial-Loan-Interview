@@ -5746,20 +5746,28 @@
             <table style="width:100%;border-collapse:collapse;">
               <tr>
                 <td class="nb" style="width:34%;text-align:center;padding:0 5pt;">
-                  <div style="border-bottom:0.75pt solid #000;height:16pt;margin-bottom:1pt;"></div><b>Signature above
-                    Printed Name of Borrower</b><br><span id="pv_borrower_fullname"
-                    style="font-size:7pt;font-weight:400;"></span>
+                  <span id="pv_borrower_fullname"
+                    style="font-size:7pt;font-weight:400;display:block;margin-bottom:2pt;"></span>
+                  <div style="border-bottom:0.75pt solid #000;height:0;margin-bottom:1pt;"></div>
+                  <b>Signature above Printed Name of Borrower</b>
                 </td>
                 <td class="nb" style="width:12%;text-align:center;padding:0 5pt;">
-                  <div style="border-bottom:0.75pt solid #000;height:16pt;margin-bottom:1pt;"></div><b>Date</b>
+                  <span id="pv_sig_date_borrower"
+                    style="font-size:7pt;font-weight:400;display:block;margin-bottom:2pt;"></span>
+                  <div style="border-bottom:0.75pt solid #000;height:0;margin-bottom:1pt;"></div>
+                  <b>Date</b>
                 </td>
                 <td class="nb" style="width:34%;text-align:center;padding:0 5pt;">
-                  <div style="border-bottom:0.75pt solid #000;height:16pt;margin-bottom:1pt;"></div><b>Signature above
-                    Printed Name of Co-Borrower/Spouse</b><br><span id="pv_coborrower_fullname"
-                    style="font-size:7pt;font-weight:400;"></span>
+                  <span id="pv_coborrower_fullname"
+                    style="font-size:7pt;font-weight:400;display:block;margin-bottom:2pt;"></span>
+                  <div style="border-bottom:0.75pt solid #000;height:0;margin-bottom:1pt;"></div>
+                  <b>Signature above Printed Name of Co-Borrower/Spouse</b>
                 </td>
                 <td class="nb" style="width:12%;text-align:center;padding:0 5pt;">
-                  <div style="border-bottom:0.75pt solid #000;height:16pt;margin-bottom:1pt;"></div><b>Date</b>
+                  <span id="pv_sig_date_coborrower"
+                    style="font-size:7pt;font-weight:400;display:block;margin-bottom:2pt;"></span>
+                  <div style="border-bottom:0.75pt solid #000;height:0;margin-bottom:1pt;"></div>
+                  <b>Date</b>
                 </td>
               </tr>
             </table>
@@ -5972,7 +5980,8 @@
       </table>
 
       <div style="text-align:right;padding:18pt 28pt 4pt 0;">
-        <div style="font-size:7.5pt;font-style:italic;margin-bottom:24pt;">Recommending Approval:</div>
+        <div style="font-size:7.5pt;font-style:italic;margin-bottom:6pt;">Recommending Approval:</div>
+        <div style="font-size:7.5pt;font-weight:700;margin-bottom:2pt;" id="pv_recomm_name"></div>
         <div style="border-bottom:0.75pt solid #000;width:170pt;display:inline-block;margin-bottom:1pt;"></div><br>
         <div style="font-size:7.5pt;">Credit Evaluation Officer</div>
       </div>
@@ -6065,7 +6074,9 @@
         var fn = v('fieldFirstName'), mn = v('fieldMiddleName'), ln = v('fieldLastName'), sx = v('fieldSuffix');
         t('pv_fn', fn); t('pv_mn', mn); t('pv_ln', ln); t('pv_sx', sx);
         var fullName = [fn, mn, ln].filter(Boolean).join(' ') + (sx ? ', ' + sx : '');
-        t('pv_borrower_fullname', fullName);
+        // Section E borrower name: prefer the typed sig name, fall back to constructed name
+        var sigName = v('fieldApplicantSigName');
+        t('pv_borrower_fullname', sigName || fullName);
 
         var dob = [v('dobMM'), v('dobDD'), v('dobYY')].filter(Boolean).join('/');
         t('pv_dob', dob);
@@ -6266,9 +6277,19 @@
         t('pv_cobfn', cobfn);
         t('pv_cobmn', cobmn);
         t('pv_cobrel', v('cobRelation'));
-        // Co-borrower full name under Section E signature line
+        // Co-borrower full name under Section E signature line:
+        // prefer dedicated co-borrower fields → fall back to spouse fields → leave blank
         var cobFullName = [cobfn, cobmn, cobln].filter(Boolean).join(' ') + (cobsx ? ', ' + cobsx : '');
+        if (!cobFullName) {
+          var spfn = v('spFirstName'), spmn = v('spMiddleName'), spln = v('spLastName'), spsx = v('spSuffix');
+          cobFullName = [spfn, spmn, spln].filter(Boolean).join(' ') + (spsx ? ', ' + spsx : '');
+        }
         t('pv_coborrower_fullname', cobFullName);
+
+        // Section E — Date fields: both sides use the same applicant date from §11
+        var sigDate = v('fieldApplicantDate');
+        t('pv_sig_date_borrower', sigDate);
+        t('pv_sig_date_coborrower', sigDate);
 
         // ── FIX 4: Loan Creation Type → print doc header (pc_) + Summary (pcs_) ─
         var lct = r('loanCreationType');
@@ -6300,6 +6321,9 @@
         var otherText = v('purpOtherText');
         if (cb('purpOther') && otherText) pp.push(otherText);
         t('pv_spu', pp.join(', '));
+
+        // ── Recommending Approval: interviewer name from Section 11 ──────────
+        t('pv_recomm_name', v('fieldInterviewerName'));
       }
 
       window.addEventListener('beforeprint', sync);
