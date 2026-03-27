@@ -3571,7 +3571,10 @@
       ['btype', 'civil', 'incsrc', 'lprod', 'hasloans', 'intexp',
         'st1', 'st2', 'st3', 'proof', 'stab', 'supp',
         'loanCreationType', 'loanType', 'loanFrequency', 'loanFacility',
-        'pep', 'crisk', 'adverse', 'vices', 'legal'].forEach(function (name) {
+        'pep', 'crisk', 'adverse', 'vices', 'legal',
+        'sex', 'homeOwnership', 'bizOwnership', 'firmSize',
+        'dep1type', 'dep1own', 'dep2type', 'dep2own', 'dep3type', 'dep3own',
+        'cc1own', 'cc2own', 'cc3own'].forEach(function (name) {
           const checked = document.querySelector('input[name="' + name + '"]:checked');
           snapshot['radio_' + name] = checked ? checked.value : '';
         });
@@ -3591,7 +3594,10 @@
       ['btype', 'civil', 'incsrc', 'lprod', 'hasloans', 'intexp',
         'st1', 'st2', 'st3', 'proof', 'stab', 'supp',
         'loanCreationType', 'loanType', 'loanFrequency', 'loanFacility',
-        'pep', 'crisk', 'adverse', 'vices', 'legal'].forEach(function (name) {
+        'pep', 'crisk', 'adverse', 'vices', 'legal',
+        'sex', 'homeOwnership', 'bizOwnership', 'firmSize',
+        'dep1type', 'dep1own', 'dep2type', 'dep2own', 'dep3type', 'dep3own',
+        'cc1own', 'cc2own', 'cc3own'].forEach(function (name) {
           const val = snapshot['radio_' + name];
           if (val) {
             const t = document.querySelector('input[name="' + name + '"][value="' + val + '"]');
@@ -3853,8 +3859,10 @@
         'Age': val('fieldAge'),
         'TIN / Gov ID': val('fieldTIN'),
         'Civil Status': getRadioValue('civil'),
+        'Sex': getRadioValue('sex'),
         'Present Address': val('fieldAddress'),
         'Years at Address': val('fieldYearsAddr'),
+        'Home Address Ownership': getRadioValue('homeOwnership'),
         'Mobile No.': val('fieldMobile'),
         'Email': val('fieldEmail'),
         // §1 — Mother's Maiden Name (new)
@@ -3876,9 +3884,11 @@
         'Employer / Business': val('fieldEmployer'),
         'Position / Type': val('fieldPosition'),
         'Work Address': val('fieldWorkAddr'),
+        'Business Address Ownership': getRadioValue('bizOwnership'),
         'Years in Job/Biz': val('fieldYearsJob'),
         'Monthly Income (PHP)': val('fieldMonthlyIncome'),
         'Income Docs': getCheckedLabels(['incBankStmt', 'incSales', 'incBIR', 'incPayslip', 'incOther']),
+        'Firm Size': getRadioValue('firmSize'),
         // §4
         'Loan Amount (PHP)': val('fieldLoanAmount'),
         'Term (months)': val('fieldLoanTerm'),
@@ -3889,9 +3899,15 @@
         // §5
         'Has Current Loans': getRadioValue('hasloans'),
         'Internal Exposure': getRadioValue('intexp'),
+        'Dep 1 Institution': val('dep1Inst'), 'Dep 1 Year': val('dep1Year'), 'Dep 1 Type': getRadioValue('dep1type'), 'Dep 1 Ownership': getRadioValue('dep1own'),
+        'Dep 2 Institution': val('dep2Inst'), 'Dep 2 Year': val('dep2Year'), 'Dep 2 Type': getRadioValue('dep2type'), 'Dep 2 Ownership': getRadioValue('dep2own'),
+        'Dep 3 Institution': val('dep3Inst'), 'Dep 3 Year': val('dep3Year'), 'Dep 3 Type': getRadioValue('dep3type'), 'Dep 3 Ownership': getRadioValue('dep3own'),
         'Loan 1 Lender': val('loan1Lender'), 'Loan 1 Type': val('loan1Type'), 'Loan 1 Balance': val('loan1Balance'), 'Loan 1 Pay': val('loan1Pay'), 'Loan 1 Status': getRadioValue('st1'),
         'Loan 2 Lender': val('loan2Lender'), 'Loan 2 Type': val('loan2Type'), 'Loan 2 Balance': val('loan2Balance'), 'Loan 2 Pay': val('loan2Pay'), 'Loan 2 Status': getRadioValue('st2'),
         'Loan 3 Lender': val('loan3Lender'), 'Loan 3 Type': val('loan3Type'), 'Loan 3 Balance': val('loan3Balance'), 'Loan 3 Pay': val('loan3Pay'), 'Loan 3 Status': getRadioValue('st3'),
+        'CC 1 Institution': val('cc1Inst'), 'CC 1 Limit': val('cc1Limit'), 'CC 1 Balance': val('cc1Balance'), 'CC 1 Ownership': getRadioValue('cc1own'),
+        'CC 2 Institution': val('cc2Inst'), 'CC 2 Limit': val('cc2Limit'), 'CC 2 Balance': val('cc2Balance'), 'CC 2 Ownership': getRadioValue('cc2own'),
+        'CC 3 Institution': val('cc3Inst'), 'CC 3 Limit': val('cc3Limit'), 'CC 3 Balance': val('cc3Balance'), 'CC 3 Ownership': getRadioValue('cc3own'),
         // §6 Secured
         'Collateral Types': getCheckedLabels(['collLand', 'collHouse', 'collVehicle', 'collMoto', 'collEquip', 'collOther']),
         'Coll 1 Desc': val('coll1Desc'), 'Coll 1 Title': val('coll1Title'), 'Coll 1 Loc': val('coll1Loc'), 'Coll 1 Area': val('coll1Area'), 'Coll 1 Owner': val('coll1Owner'), 'Coll 1 Rel': val('coll1Rel'),
