@@ -2099,65 +2099,113 @@
         </div>
       </div>
 
-      <!-- §2 HOUSEHOLD & DEPENDENTS -->
-      <div class="sec" id="s2">
+      <!-- §2 LOAN REQUEST -->
+      <div class="sec" id="s2_lr">
         <div class="sec-head">
           <span class="sec-num">2</span>
-          <span class="sec-en">Household & Dependents</span>
-          <span class="sec-wr">/ Panimalay ngan Sinusuportahan</span>
+          <span class="sec-en">Loan Request</span>
+          <span class="sec-wr">/ Ginhihimo nga Pangutang</span>
         </div>
         <div class="sec-body">
           <div class="row">
-            <div class="fg full">
-              <label class="lbl">Spouse Name (if any) <span class="wr">/ Ngaran han Asawa</span></label>
-              <div class="row" style="gap:8px;margin:0;">
-                <div class="fg"><input type="text" class="inp" id="spFirstName" placeholder="First Name"></div>
-                <div class="fg"><input type="text" class="inp" id="spMiddleName" placeholder="Middle Name"></div>
-                <div class="fg"><input type="text" class="inp" id="spLastName" placeholder="Last Name"></div>
-                <div class="fg sm"><input type="text" class="inp" id="spSuffix" placeholder="Suffix"></div>
-              </div>
-            </div>
-            <div class="fg md">
-              <label class="lbl">Spouse Date of Birth <span class="wr">/ Petsa han Pagkatawo</span></label>
-              <div class="dg">
-                <input type="text" class="inp" id="spDobMM" placeholder="MM" maxlength="2">
-                <span class="sep">/</span>
-                <input type="text" class="inp" id="spDobDD" placeholder="DD" maxlength="2">
-                <span class="sep">/</span>
-                <input type="text" class="inp yr" id="spDobYY" placeholder="YYYY" maxlength="4">
-              </div>
-            </div>
-            <div class="fg sm">
-              <label class="lbl">Dependents <span class="wr">/ Kadamo</span></label>
-              <input type="number" class="inp" id="fieldDependents" placeholder="0">
-            </div>
-          </div>
-          <div class="row">
-            <div class="fg full">
-              <label class="lbl">Main Household Expenses <span class="wr">/ Panguna nga Bayarin han
-                  Panimalay</span></label>
+            <div class="fg">
+              <label class="lbl">Loan Amount Applied <span class="wr">/ Halaga nga Gin-aaplayan</span></label>
               <div class="peso-wrap">
                 <span class="cur">PHP</span>
-                <input type="text" class="inp" id="fieldHHExpenses" placeholder="0.00" style="max-width:180px;">
-                <span class="note">/bulan (tantiya — estimate)</span>
+                <input type="text" class="inp" id="fieldLoanAmount" placeholder="0.00">
+              </div>
+            </div>
+            <div class="fg md">
+              <label class="lbl">Term Requested <span class="wr">/ Kadugayon</span></label>
+              <div class="peso-wrap">
+                <input type="number" class="inp" id="fieldLoanTerm" placeholder="0" style="width:70px;">
+                <span class="note">months / ka bulan</span>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="fg full">
-              <label class="lbl">Co-Borrower Name <span class="wr">/ Ngaran han Katupad nga Nangungutang</span> <span
-                  style="color:var(--ink-300);font-weight:400;font-size:0.76rem;">(if any)</span></label>
-              <div class="row" style="gap:8px;margin:0;">
-                <div class="fg"><input type="text" class="inp" id="cobFirstName" placeholder="First Name"></div>
-                <div class="fg"><input type="text" class="inp" id="cobMiddleName" placeholder="Middle Name"></div>
-                <div class="fg"><input type="text" class="inp" id="cobLastName" placeholder="Last Name"></div>
-                <div class="fg sm"><input type="text" class="inp" id="cobSuffix" placeholder="Suffix"></div>
+              <label class="lbl">Loan Facility <span class="wr">/ Klase han Pautang</span></label>
+              <div class="cg">
+                <label class="ci"><input type="radio" name="loanFacility" value="Credit Line"> Credit Line</label>
+                <label class="ci"><input type="radio" name="loanFacility" value="Term Loan"> Term Loan</label>
+                <label class="ci"><input type="radio" name="loanFacility" value="Others"> Others (specify): <input
+                    type="text" class="inp" id="loanFacilityOther" style="width:90px;padding:3px 6px;"
+                    placeholder="Specify"></label>
               </div>
             </div>
-            <div class="fg md">
-              <label class="lbl">Relation to Borrower <span class="wr">/ Relasyon</span></label>
-              <input type="text" class="inp" id="cobRelation" placeholder="e.g. Spouse, Parent">
+          </div>
+          <div class="row">
+            <div class="fg full">
+              <label class="lbl">Proposed Frequency of Repayment <span class="wr">/ Dagsanon han Bayad</span></label>
+              <div class="cg">
+                <label class="ci"><input type="radio" name="loanFrequency" value="Weekly"> Weekly</label>
+                <label class="ci"><input type="radio" name="loanFrequency" value="Monthly"> Monthly</label>
+                <label class="ci"><input type="radio" name="loanFrequency" value="Quarterly"> Quarterly</label>
+                <label class="ci"><input type="radio" name="loanFrequency" value="Annually"> Annually</label>
+                <label class="ci"><input type="radio" name="loanFrequency" value="Lump sum"> Lump sum</label>
+                <label class="ci"><input type="radio" name="loanFrequency" value="Others"> Others: <input type="text"
+                    class="inp" id="loanFrequencyOther" style="width:90px;padding:3px 6px;"
+                    placeholder="Specify"></label>
+              </div>
             </div>
+          </div>
+          <div class="row">
+            <div class="fg full">
+              <label class="lbl">Loan Creation Type <span class="wr">/ Klase han Pagbuhat han Utang</span></label>
+              <div class="cg">
+                <label class="ci"><input type="radio" name="loanCreationType" value="New Loan"> New Loan <span
+                    class="wr">/ Bag-o</span></label>
+                <label class="ci"><input type="radio" name="loanCreationType" value="Additional Loan"> Additional
+                  Loan</label>
+                <label class="ci"><input type="radio" name="loanCreationType" value="Re-Loan"> Re-Loan</label>
+                <label class="ci"><input type="radio" name="loanCreationType" value="Renewal"> Renewal <span
+                    class="wr">/ Panibago</span></label>
+                <label class="ci"><input type="radio" name="loanCreationType" value="Restructure"> Restructure <span
+                    class="wr">/ Pagbabago han Termino</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="fg full">
+              <label class="lbl">Type of Loan <span class="wr">/ Klase han Utang</span></label>
+              <div class="cg">
+                <label class="ci"><input type="radio" name="loanType" value="Unsecured Loan"> Unsecured Loan</label>
+                <label class="ci"><input type="radio" name="loanType" value="Secured Loan"> Secured Loan</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="fg full">
+              <label class="lbl">Purpose <span class="wr">/ Katuyoan</span></label>
+              <div class="cg">
+                <label class="ci"><input type="checkbox" id="purpBusiness"> Business <span class="wr">/
+                    Negosyo</span></label>
+                <label class="ci"><input type="checkbox" id="purpPersonal"> Personal</label>
+                <label class="ci"><input type="checkbox" id="purpEducation"> Education <span class="wr">/
+                    Eskwela</span></label>
+                <label class="ci"><input type="checkbox" id="purpMedical"> Medical <span class="wr">/
+                    Medikal</span></label>
+                <label class="ci"><input type="checkbox" id="purpHouse"> House Repair</label>
+                <label class="ci"><input type="checkbox" id="purpTax"> Property/Estate Tax</label>
+                <label class="ci"><input type="checkbox" id="purpPayoff"> Pay-off Loan Obligation</label>
+                <label class="ci"><input type="checkbox" id="purpOther"> Other <span class="wr">/ Iba</span>: <input
+                    type="text" class="inp" id="purpOtherText" style="width:90px;padding:3px 6px;"
+                    placeholder="Specify"></label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="fg full">
+              <label class="lbl">Payment Source <span class="wr">/ Tinubdan han Pambayad</span></label>
+              <input type="text" class="inp" id="fieldPaySource" placeholder="Describe primary source of repayment">
+            </div>
+          </div>
+          <div class="info-box" id="buyoutBox" style="display:none;">
+            <strong>⚠ Buy-out / Refinance Control</strong> — If proceeds include payoff of existing debt, document
+            creditor name, payoff amount, and settlement method (prefer direct bank-to-creditor remittance).
+            <span class="wr">Kon an pautang para pambayad ha iba nga utang, isurat an ngaran han pinutangan, kantidad,
+              ngan pamaagi han pagbayad.</span>
           </div>
         </div>
       </div>
@@ -2437,113 +2485,65 @@
         </div>
       </div>
 
-      <!-- §4 LOAN REQUEST -->
-      <div class="sec" id="s4">
+      <!-- §4 HOUSEHOLD & DEPENDENTS -->
+      <div class="sec" id="s4_hh">
         <div class="sec-head">
           <span class="sec-num">4</span>
-          <span class="sec-en">Loan Request</span>
-          <span class="sec-wr">/ Ginhihimo nga Pangutang</span>
+          <span class="sec-en">Household & Dependents</span>
+          <span class="sec-wr">/ Panimalay ngan Sinusuportahan</span>
         </div>
         <div class="sec-body">
           <div class="row">
-            <div class="fg">
-              <label class="lbl">Loan Amount Applied <span class="wr">/ Halaga nga Gin-aaplayan</span></label>
-              <div class="peso-wrap">
-                <span class="cur">PHP</span>
-                <input type="text" class="inp" id="fieldLoanAmount" placeholder="0.00">
+            <div class="fg full">
+              <label class="lbl">Spouse Name (if any) <span class="wr">/ Ngaran han Asawa</span></label>
+              <div class="row" style="gap:8px;margin:0;">
+                <div class="fg"><input type="text" class="inp" id="spFirstName" placeholder="First Name"></div>
+                <div class="fg"><input type="text" class="inp" id="spMiddleName" placeholder="Middle Name"></div>
+                <div class="fg"><input type="text" class="inp" id="spLastName" placeholder="Last Name"></div>
+                <div class="fg sm"><input type="text" class="inp" id="spSuffix" placeholder="Suffix"></div>
               </div>
             </div>
             <div class="fg md">
-              <label class="lbl">Term Requested <span class="wr">/ Kadugayon</span></label>
+              <label class="lbl">Spouse Date of Birth <span class="wr">/ Petsa han Pagkatawo</span></label>
+              <div class="dg">
+                <input type="text" class="inp" id="spDobMM" placeholder="MM" maxlength="2">
+                <span class="sep">/</span>
+                <input type="text" class="inp" id="spDobDD" placeholder="DD" maxlength="2">
+                <span class="sep">/</span>
+                <input type="text" class="inp yr" id="spDobYY" placeholder="YYYY" maxlength="4">
+              </div>
+            </div>
+            <div class="fg sm">
+              <label class="lbl">Dependents <span class="wr">/ Kadamo</span></label>
+              <input type="number" class="inp" id="fieldDependents" placeholder="0">
+            </div>
+          </div>
+          <div class="row">
+            <div class="fg full">
+              <label class="lbl">Main Household Expenses <span class="wr">/ Panguna nga Bayarin han
+                  Panimalay</span></label>
               <div class="peso-wrap">
-                <input type="number" class="inp" id="fieldLoanTerm" placeholder="0" style="width:70px;">
-                <span class="note">months / ka bulan</span>
+                <span class="cur">PHP</span>
+                <input type="text" class="inp" id="fieldHHExpenses" placeholder="0.00" style="max-width:180px;">
+                <span class="note">/bulan (tantiya — estimate)</span>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="fg full">
-              <label class="lbl">Loan Facility <span class="wr">/ Klase han Pautang</span></label>
-              <div class="cg">
-                <label class="ci"><input type="radio" name="loanFacility" value="Credit Line"> Credit Line</label>
-                <label class="ci"><input type="radio" name="loanFacility" value="Term Loan"> Term Loan</label>
-                <label class="ci"><input type="radio" name="loanFacility" value="Others"> Others (specify): <input
-                    type="text" class="inp" id="loanFacilityOther" style="width:90px;padding:3px 6px;"
-                    placeholder="Specify"></label>
+              <label class="lbl">Co-Borrower Name <span class="wr">/ Ngaran han Katupad nga Nangungutang</span> <span
+                  style="color:var(--ink-300);font-weight:400;font-size:0.76rem;">(if any)</span></label>
+              <div class="row" style="gap:8px;margin:0;">
+                <div class="fg"><input type="text" class="inp" id="cobFirstName" placeholder="First Name"></div>
+                <div class="fg"><input type="text" class="inp" id="cobMiddleName" placeholder="Middle Name"></div>
+                <div class="fg"><input type="text" class="inp" id="cobLastName" placeholder="Last Name"></div>
+                <div class="fg sm"><input type="text" class="inp" id="cobSuffix" placeholder="Suffix"></div>
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="fg full">
-              <label class="lbl">Proposed Frequency of Repayment <span class="wr">/ Dagsanon han Bayad</span></label>
-              <div class="cg">
-                <label class="ci"><input type="radio" name="loanFrequency" value="Weekly"> Weekly</label>
-                <label class="ci"><input type="radio" name="loanFrequency" value="Monthly"> Monthly</label>
-                <label class="ci"><input type="radio" name="loanFrequency" value="Quarterly"> Quarterly</label>
-                <label class="ci"><input type="radio" name="loanFrequency" value="Annually"> Annually</label>
-                <label class="ci"><input type="radio" name="loanFrequency" value="Lump sum"> Lump sum</label>
-                <label class="ci"><input type="radio" name="loanFrequency" value="Others"> Others: <input type="text"
-                    class="inp" id="loanFrequencyOther" style="width:90px;padding:3px 6px;"
-                    placeholder="Specify"></label>
-              </div>
+            <div class="fg md">
+              <label class="lbl">Relation to Borrower <span class="wr">/ Relasyon</span></label>
+              <input type="text" class="inp" id="cobRelation" placeholder="e.g. Spouse, Parent">
             </div>
-          </div>
-          <div class="row">
-            <div class="fg full">
-              <label class="lbl">Loan Creation Type <span class="wr">/ Klase han Pagbuhat han Utang</span></label>
-              <div class="cg">
-                <label class="ci"><input type="radio" name="loanCreationType" value="New Loan"> New Loan <span
-                    class="wr">/ Bag-o</span></label>
-                <label class="ci"><input type="radio" name="loanCreationType" value="Additional Loan"> Additional
-                  Loan</label>
-                <label class="ci"><input type="radio" name="loanCreationType" value="Re-Loan"> Re-Loan</label>
-                <label class="ci"><input type="radio" name="loanCreationType" value="Renewal"> Renewal <span
-                    class="wr">/ Panibago</span></label>
-                <label class="ci"><input type="radio" name="loanCreationType" value="Restructure"> Restructure <span
-                    class="wr">/ Pagbabago han Termino</span></label>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="fg full">
-              <label class="lbl">Type of Loan <span class="wr">/ Klase han Utang</span></label>
-              <div class="cg">
-                <label class="ci"><input type="radio" name="loanType" value="Unsecured Loan"> Unsecured Loan</label>
-                <label class="ci"><input type="radio" name="loanType" value="Secured Loan"> Secured Loan</label>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="fg full">
-              <label class="lbl">Purpose <span class="wr">/ Katuyoan</span></label>
-              <div class="cg">
-                <label class="ci"><input type="checkbox" id="purpBusiness"> Business <span class="wr">/
-                    Negosyo</span></label>
-                <label class="ci"><input type="checkbox" id="purpPersonal"> Personal</label>
-                <label class="ci"><input type="checkbox" id="purpEducation"> Education <span class="wr">/
-                    Eskwela</span></label>
-                <label class="ci"><input type="checkbox" id="purpMedical"> Medical <span class="wr">/
-                    Medikal</span></label>
-                <label class="ci"><input type="checkbox" id="purpHouse"> House Repair</label>
-                <label class="ci"><input type="checkbox" id="purpTax"> Property/Estate Tax</label>
-                <label class="ci"><input type="checkbox" id="purpPayoff"> Pay-off Loan Obligation</label>
-                <label class="ci"><input type="checkbox" id="purpOther"> Other <span class="wr">/ Iba</span>: <input
-                    type="text" class="inp" id="purpOtherText" style="width:90px;padding:3px 6px;"
-                    placeholder="Specify"></label>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="fg full">
-              <label class="lbl">Payment Source <span class="wr">/ Tinubdan han Pambayad</span></label>
-              <input type="text" class="inp" id="fieldPaySource" placeholder="Describe primary source of repayment">
-            </div>
-          </div>
-          <div class="info-box" id="buyoutBox" style="display:none;">
-            <strong>⚠ Buy-out / Refinance Control</strong> — If proceeds include payoff of existing debt, document
-            creditor name, payoff amount, and settlement method (prefer direct bank-to-creditor remittance).
-            <span class="wr">Kon an pautang para pambayad ha iba nga utang, isurat an ngaran han pinutangan, kantidad,
-              ngan pamaagi han pagbayad.</span>
           </div>
         </div>
       </div>
@@ -6388,33 +6388,41 @@
       font-weight: 600;
       letter-spacing: 0.3px;
       cursor: pointer;
-      box-shadow: 0 6px 28px rgba(11, 35, 24, 0.45), 0 2px 6px rgba(0,0,0,0.2);
-      transition: transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s cubic-bezier(.4,0,.2,1), background 0.18s;
+      box-shadow: 0 6px 28px rgba(11, 35, 24, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: transform 0.18s cubic-bezier(.4, 0, .2, 1), box-shadow 0.18s cubic-bezier(.4, 0, .2, 1), background 0.18s;
       user-select: none;
     }
+
     .print-fab:hover {
       background: linear-gradient(135deg, var(--pine-500) 0%, var(--pine-400) 100%);
       transform: translateY(-2px) scale(1.03);
-      box-shadow: 0 10px 36px rgba(11, 35, 24, 0.5), 0 3px 8px rgba(0,0,0,0.22);
+      box-shadow: 0 10px 36px rgba(11, 35, 24, 0.5), 0 3px 8px rgba(0, 0, 0, 0.22);
     }
+
     .print-fab:active {
       transform: translateY(0) scale(0.98);
       box-shadow: 0 4px 16px rgba(11, 35, 24, 0.4);
     }
+
     .print-fab svg {
       flex-shrink: 0;
       opacity: 0.92;
     }
+
     @media print {
-      .print-fab { display: none !important; }
+      .print-fab {
+        display: none !important;
+      }
     }
   </style>
 
-  <button class="print-fab" onclick="window.syncPrint && window.syncPrint(); window.print();" title="Print or Save as PDF">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="6 9 6 2 18 2 18 9"/>
-      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
-      <rect x="6" y="14" width="12" height="8"/>
+  <button class="print-fab" onclick="window.syncPrint && window.syncPrint(); window.print();"
+    title="Print or Save as PDF">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 6 2 18 2 18 9" />
+      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+      <rect x="6" y="14" width="12" height="8" />
     </svg>
     Print / Save as PDF
   </button>
