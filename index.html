@@ -912,6 +912,67 @@
       font-style: italic;
     }
 
+    /* ── SIGNATURE PAD ── */
+    .sig-pad-wrap {
+      position: relative;
+      border: 2px solid var(--pine-300);
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      margin-bottom: 6px;
+      overflow: hidden;
+      touch-action: none;
+      cursor: crosshair;
+    }
+    .sig-pad-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 90px;
+    }
+    .sig-pad-wrap:hover { border-color: var(--pine-500); }
+    .sig-pad-wrap.signed { border-color: var(--pine-600); background: #f9fefb; }
+    .sig-pad-wrap.signed::after {
+      content: '✓';
+      position: absolute;
+      top: 4px; right: 7px;
+      font-size: 0.75rem;
+      color: var(--pine-500);
+      font-weight: 700;
+    }
+    .sig-pad-hint {
+      font-size: 0.68rem;
+      color: var(--ink-300);
+      font-style: italic;
+      text-align: center;
+      margin-bottom: 2px;
+      pointer-events: none;
+      position: absolute;
+      bottom: 6px; left: 0; right: 0;
+      transition: opacity 0.2s;
+    }
+    .sig-pad-wrap.signed .sig-pad-hint { opacity: 0; }
+    .sig-pad-clear {
+      position: absolute;
+      top: 4px; right: 4px;
+      background: rgba(192,57,43,0.08);
+      border: 1px solid rgba(192,57,43,0.25);
+      border-radius: 4px;
+      color: var(--danger);
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.18s;
+      line-height: 1.4;
+    }
+    .sig-pad-wrap:hover .sig-pad-clear,
+    .sig-pad-wrap.signed .sig-pad-clear { opacity: 1; }
+    .sig-pad-clear:hover { background: var(--danger); color: #fff; }
+    @media print {
+      .sig-pad-clear { display: none !important; }
+      .sig-pad-wrap { border-color: #aaa; }
+    }
+
     /* ── DECLARATION BOX ── */
     .decl-box {
       background: var(--pine-25);
@@ -3247,11 +3308,16 @@
           </div>
           <div class="sig-row">
             <div class="sig-blk">
+              <!-- Applicant Signature Pad -->
+              <div class="sig-pad-wrap" id="sigWrap_applicant">
+                <canvas id="sigCanvas_applicant" height="180"></canvas>
+                <span class="sig-pad-hint">Sign here / Pirma dinhi</span>
+                <button class="sig-pad-clear" onclick="clearSigPad('applicant')" type="button">✕ Clear</button>
+              </div>
               <input type="text" class="inp sig-input" id="fieldApplicantSigName"
-                placeholder="Print name above signature line"
+                placeholder="Print name below signature"
                 style="text-align:center; font-style:italic; border:none; border-bottom:2px solid var(--pine-700); border-radius:0; background:transparent; width:100%; margin-bottom:3px;">
-              <div class="sig-lbl">Applicant Signature over Printed Name <span class="wr">/ Pirma ngan Ngaran han
-                  Aplikante</span></div>
+              <div class="sig-lbl">Applicant Signature over Printed Name <span class="wr">/ Pirma ngan Ngaran han Aplikante</span></div>
             </div>
             <div class="sig-blk" style="flex:0.45;">
               <input type="text" class="inp sig-input" id="fieldApplicantDate" placeholder="MM / DD / YYYY"
@@ -3321,10 +3387,15 @@
           </div>
           <div class="sig-row" style="margin-top:20px;">
             <div class="sig-blk">
+              <!-- Interviewer Signature Pad -->
+              <div class="sig-pad-wrap" id="sigWrap_interviewer">
+                <canvas id="sigCanvas_interviewer" height="180"></canvas>
+                <span class="sig-pad-hint">Sign here / Pirma dinhi</span>
+                <button class="sig-pad-clear" onclick="clearSigPad('interviewer')" type="button">✕ Clear</button>
+              </div>
               <input type="text" class="inp sig-input" id="fieldInterviewerName" placeholder="Print full name"
                 style="text-align:center; font-style:italic; border:none; border-bottom:2px solid var(--pine-700); border-radius:0; background:transparent; width:100%; margin-bottom:3px;">
-              <div class="sig-lbl">Interviewer — Signature over Printed Name <span class="wr">/ Nag-interbyu</span>
-              </div>
+              <div class="sig-lbl">Interviewer — Signature over Printed Name <span class="wr">/ Nag-interbyu</span></div>
             </div>
             <div class="sig-blk">
               <input type="text" class="inp sig-input" id="fieldInterviewerPosition" placeholder="Position / Rank"
@@ -6426,6 +6497,194 @@
     </svg>
     Print / Save as PDF
   </button>
+  <!-- ── SIGNATURE PAD ENGINE ───────────────────────────────────────────── -->
+  <script>
+  (function () {
+    'use strict';
+
+    // Registry of all active pads: { [padId]: { canvas, ctx, drawing, hasSig } }
+    var PADS = {};
+
+    var PAD_DEFS = [
+      { id: 'applicant',   color: '#1B4332' },  // pine-700 — dark green
+      { id: 'interviewer', color: '#1B4332' }
+    ];
+
+    function initPad(def) {
+      var canvas = document.getElementById('sigCanvas_' + def.id);
+      var wrap   = document.getElementById('sigWrap_'   + def.id);
+      if (!canvas || !wrap) return;
+
+      var dpr = window.devicePixelRatio || 1;
+      var state = { canvas: canvas, wrap: wrap, ctx: null, drawing: false, hasSig: false, color: def.color, dpr: dpr };
+
+      function resize() {
+        var rect  = canvas.getBoundingClientRect();
+        var imgDt = canvas.toDataURL(); // preserve existing drawing
+        canvas.width  = rect.width  * dpr;
+        canvas.height = rect.height * dpr;
+        var ctx = canvas.getContext('2d');
+        ctx.scale(dpr, dpr);
+        ctx.strokeStyle = state.color;
+        ctx.lineWidth   = 1.8;
+        ctx.lineCap     = 'round';
+        ctx.lineJoin    = 'round';
+        state.ctx = ctx;
+        // Restore drawing if any
+        if (state.hasSig) {
+          var img = new Image();
+          img.onload = function () { ctx.drawImage(img, 0, 0, rect.width, rect.height); };
+          img.src = imgDt;
+        }
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+
+      function getPos(e) {
+        var rect = canvas.getBoundingClientRect();
+        var src  = e.touches ? e.touches[0] : e;
+        return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+      }
+
+      function startDraw(e) {
+        e.preventDefault();
+        state.drawing = true;
+        var p = getPos(e);
+        state.ctx.beginPath();
+        state.ctx.moveTo(p.x, p.y);
+      }
+
+      function draw(e) {
+        if (!state.drawing) return;
+        e.preventDefault();
+        var p = getPos(e);
+        state.ctx.lineTo(p.x, p.y);
+        state.ctx.stroke();
+        if (!state.hasSig) {
+          state.hasSig = true;
+          wrap.classList.add('signed');
+        }
+      }
+
+      function endDraw(e) {
+        if (!state.drawing) return;
+        e.preventDefault();
+        state.drawing = false;
+        state.ctx.closePath();
+      }
+
+      // Mouse events
+      canvas.addEventListener('mousedown',  startDraw);
+      canvas.addEventListener('mousemove',  draw);
+      canvas.addEventListener('mouseup',    endDraw);
+      canvas.addEventListener('mouseleave', endDraw);
+
+      // Touch events
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove',  draw,      { passive: false });
+      canvas.addEventListener('touchend',   endDraw,   { passive: false });
+
+      PADS[def.id] = state;
+    }
+
+    // Public: clear a pad by id
+    window.clearSigPad = function (id) {
+      var state = PADS[id];
+      if (!state) return;
+      var rect = state.canvas.getBoundingClientRect();
+      state.ctx.clearRect(0, 0, rect.width, rect.height);
+      state.hasSig = false;
+      state.wrap.classList.remove('signed');
+    };
+
+    // Public: get base64 PNG of a pad (for saving/export)
+    window.getSigDataURL = function (id) {
+      var state = PADS[id];
+      if (!state || !state.hasSig) return '';
+      return state.canvas.toDataURL('image/png');
+    };
+
+    // Public: returns true if pad has a signature
+    window.hasSig = function (id) {
+      return !!(PADS[id] && PADS[id].hasSig);
+    };
+
+    // Init all pads on DOM ready
+    function init() {
+      PAD_DEFS.forEach(initPad);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // ── Hook into print sync so signatures appear in print preview ──────────
+    // The existing syncPrint() fills the print doc (pdoc).
+    // We overlay the signature images into the print doc sig lines.
+    var _origSync = window.syncPrint;
+    window.syncPrint = function () {
+      if (_origSync) _origSync();
+
+      // Applicant sig → find the matching print-doc cell
+      var appSigEl = document.getElementById('pv_applicant_sig_img');
+      if (appSigEl) {
+        appSigEl.src = getSigDataURL('applicant') || '';
+        appSigEl.style.display = hasSig('applicant') ? 'block' : 'none';
+      }
+
+      // Interviewer sig → find the matching print-doc cell
+      var intSigEl = document.getElementById('pv_interviewer_sig_img');
+      if (intSigEl) {
+        intSigEl.src = getSigDataURL('interviewer') || '';
+        intSigEl.style.display = hasSig('interviewer') ? 'block' : 'none';
+      }
+    };
+
+    // ── Hook into snapshot capture so sigs are saved with the record ────────
+    var _origCapture = window.captureFormSnapshot;
+    if (typeof _origCapture === 'function') {
+      // Will be hooked after the main script defines it
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      // Patch captureFormSnapshot to also capture sig data URLs
+      if (typeof window.captureFormSnapshot === 'function') {
+        var _orig = window.captureFormSnapshot;
+        window.captureFormSnapshot = function () {
+          var snap = _orig();
+          snap['_sig_applicant']   = getSigDataURL('applicant')   || '';
+          snap['_sig_interviewer'] = getSigDataURL('interviewer') || '';
+          return snap;
+        };
+      }
+
+      // Patch restoreFormSnapshot to also restore sig canvases
+      if (typeof window.restoreFormSnapshot === 'function') {
+        var _origR = window.restoreFormSnapshot;
+        window.restoreFormSnapshot = function (snapshot) {
+          _origR(snapshot);
+          ['applicant', 'interviewer'].forEach(function (id) {
+            var dataURL = snapshot['_sig_' + id];
+            var state   = PADS[id];
+            if (!dataURL || !state) return;
+            var img  = new Image();
+            var rect = state.canvas.getBoundingClientRect();
+            img.onload = function () {
+              state.ctx.clearRect(0, 0, rect.width, rect.height);
+              state.ctx.drawImage(img, 0, 0, rect.width, rect.height);
+              state.hasSig = true;
+              state.wrap.classList.add('signed');
+            };
+            img.src = dataURL;
+          });
+        };
+      }
+    });
+
+  })();
+  </script>
 </body>
 
 </html>
